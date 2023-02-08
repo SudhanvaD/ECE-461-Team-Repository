@@ -2,7 +2,7 @@
 
 import requests
 
-headers = {"Authorization": "Bearer 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"}
+headers = {"Authorization": "Bearer YOUR_TOKEN"}
 
 
 def run_query(query):  # A simple function to use requests.post to make the API call. Note the json= section.

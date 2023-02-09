@@ -13,6 +13,10 @@ elif [ "$1" == "install" ]; then
 	pip3 install datetime
 	go mod init main
 	go install
+	go get fmt
+	go get io/ioutil
+	go get strings
+	go get strconv
 	deactivate
 	exit 0
 elif [ "$1" == "test" ]; then

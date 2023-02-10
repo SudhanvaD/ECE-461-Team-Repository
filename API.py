@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from decouple import config
 
 ## Get number of contributors
 
@@ -8,7 +9,7 @@ url1 = 'https://api.github.com/repos/cloudinary/cloudinary_npm'
 url2 = 'https://github.com/nullivex/nodist'
 url3 = 'https://github.com/lodash/lodash'
 
-file = open(r'Sample Url File.txt',"r")
+file = open(r'Url File.txt',"r")
 input = file.readlines()
 file.close()
 input[len(input)-1] = input[len(input)-1] + '\n'
@@ -137,7 +138,7 @@ def pull_requests(url,token = False):
     rd = response.json()
     return len(rd)
 
-def write(input):
+def write(input,token):
     out = open(r'out.txt','w')
     for url in input:
         url = format_url(url)
@@ -156,7 +157,7 @@ def write(input):
     out.close()
 
 
-write(git_inputs)
+write(git_inputs,token)
 # urlx = format_url(url2)
 # print(events(urlx,'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'))
 

@@ -11,6 +11,8 @@ elif [ "$1" == "install" ]; then
 	pip3 install requests
 	pip3 install Coverage
 	pip3 install datetime
+	pip3 install decouple
+	pip3 install validators
 	go mod init main
 	go install
 	go get fmt

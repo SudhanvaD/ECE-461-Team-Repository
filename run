@@ -1,0 +1,40 @@
+#! /bin/bash
+if [ -z "$1" ]; then
+	echo "Error, not enough arguments"
+	exit 1
+elif [ "$1" == "install" ]; then
+	python3 -m venv .
+    echo "I'm doing setup and pip installs here"
+	source ./bin/activate
+	pip3 install --upgrade pip
+	pip3 install json
+	pip3 install requests
+	pip3 install Coverage
+	pip3 install datetime
+	go mod init main
+	go install
+	go get fmt
+	go get io/ioutil
+	go get strings
+	go get strconv
+	deactivate
+	exit 0
+elif [ "$1" == "test" ]; then
+	echo "Test running"
+	python3 -m venv .
+	source ./bin/activate
+	python3 test.py "$1"
+	deactivate
+	exit 0
+else 
+	python3 -m venv .
+	source ./bin/activate
+	python3 urlValidator.py
+	python3 graphGlAPi.py
+	python3 urlValidator.py
+	python3 API.py
+	go run Number_of_Lines.go
+	go run Metric.go
+	deactivate
+	exit 0
+fi

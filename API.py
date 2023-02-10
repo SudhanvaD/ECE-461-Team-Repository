@@ -16,7 +16,6 @@ input = [i[:-1] for i in input]
 git_inputs = [i for i in input if i[8:11] == 'git']
 npm_inputs = [i for i in input if i[8:11] == 'npm']
 error_inputs = [i for i in input if ((i[8:11] == 'npm') and (i[8:11] == 'git'))]
-os.environ['GITHUB_TOKEN'] = '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'
 token = os.getenv('GITHUB_TOKEN')
 
 def format_url(url):

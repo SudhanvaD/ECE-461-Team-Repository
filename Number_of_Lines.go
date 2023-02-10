@@ -3,6 +3,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"os"
+	"strconv"
 )
 
 func main(){
@@ -10,6 +12,11 @@ func main(){
 	if err != nil {
 		panic(err)
 	}
+	file, err := os.Create("output_lines.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer file.Close()
 	for _, f:= range files {
 		fmt.Println(f.Name())
 		content, err := ioutil.ReadFile(f.Name())
@@ -30,7 +37,16 @@ func main(){
 				nonEmpty = append(nonEmpty,str)
 			}
 		}
-		fmt.Println(len(nonEmpty))
+		_, err = file.WriteString(f.Name())
+		if err != nil {
+			fmt.Println(err)
+		}
+		string_len := strconv.Itoa(len(nonEmpty)) + " \n"
+		_, err = file.WriteString(string_len)
+		if err != nil {
+			fmt.Println(err)
+		}
+		// fmt.Println(len(nonEmpty))
 	}
 }
 

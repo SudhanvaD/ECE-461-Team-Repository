@@ -1,6 +1,7 @@
 import validators
+import sys
 
-urlFilePath = "/Users/haani/Documents/Spring 2023/ECE 461/Haani's Fork/ECE-461-Haani-Repository/Url File.txt"
+
 
 def parseUrls(urlFilePath):
     try:
@@ -12,15 +13,20 @@ def parseUrls(urlFilePath):
 
 def urlValidator(urls):
     validatedUrls = []
+    npmUrls = []
     for url in urls:
         if validators.url(url) is True and 'github.com' in url:
             validatedUrls.append(url.replace('\n',''))
+        elif validators.url(url) is True and 'npmjs.com' in url:
+            npmUrls.append(url.replace('\n',''))
 
-    return validatedUrls
+    return validatedUrls, npmUrls
 
-urls = parseUrls(urlFilePath)
-validUrls = urlValidator(urls)
+def urlParse(urlFilePath):
+    urls = parseUrls(urlFilePath)
+    validUrls, npmUrls = urlValidator(urls)
 
-with open("Validated Urls", "w") as f:
-    for url in validUrls:
-        print(url, file=f)
+    # with open("Validated Urls", "w") as f:
+    #     for url in validUrls:
+    #         print(url, file=f)
+    return validUrls, npmUrls

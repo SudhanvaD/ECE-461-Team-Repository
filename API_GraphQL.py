@@ -1,9 +1,9 @@
 import requests
 from decouple import config
 
-API_KEY = config('API_KEY')
+token = config('API_KEY')
 
-headers = {"Authorization": API_KEY}
+headers = {"Authorization": 'Bearer ' + token}
 
 
 def run_graphQlQuery(graphQlQuery):  # A simple function to use requests.post to make the API call. Note the json= section.
@@ -15,23 +15,24 @@ def run_graphQlQuery(graphQlQuery):  # A simple function to use requests.post to
 
 
 # The GraphQL query (with a few aditional bits included) itself defined as a multi-line string.
-graphQlQuery = """
-{
-  viewer {
-    login
+def run_QL():
+  graphQlQuery = """
+  {
+    viewer {
+      login
+    }
+    rateLimit {
+      limit
+      cost
+      remaining
+      resetAt
+    }
   }
-  rateLimit {
-    limit
-    cost
-    remaining
-    resetAt
-  }
-}
-"""
+  """
 
-result = run_graphQlQuery(graphQlQuery)  # Execute the query
-remaining_rate_limit = result["data"]["rateLimit"]["remaining"]  # Drill down the dictionary
-print("Remaining rate limit - {}".format(remaining_rate_limit))
+  result = run_graphQlQuery(graphQlQuery)  # Execute the query
+  remaining_rate_limit = result["data"]["rateLimit"]["remaining"]  # Drill down the dictionary
+#print("Remaining rate limit - {}".format(remaining_rate_limit))
 
-with open("outputGraphQl.txt", "w") as f:
-    print("Remaining rate limit - {}".format(remaining_rate_limit), file=f)
+  with open("outputGraphQl.txt", "w") as f:
+      print("Remaining rate limit - {}".format(remaining_rate_limit), file=f)

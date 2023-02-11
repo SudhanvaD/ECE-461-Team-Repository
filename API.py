@@ -9,15 +9,15 @@ url1 = 'https://api.github.com/repos/cloudinary/cloudinary_npm'
 url2 = 'https://github.com/nullivex/nodist'
 url3 = 'https://github.com/lodash/lodash'
 
-file = open(r'Url File.txt',"r")
-input = file.readlines()
-file.close()
-input[len(input)-1] = input[len(input)-1] + '\n'
-input = [i[:-1] for i in input]
-git_inputs = [i for i in input if i[8:11] == 'git']
-npm_inputs = [i for i in input if i[8:11] == 'npm']
-error_inputs = [i for i in input if ((i[8:11] == 'npm') and (i[8:11] == 'git'))]
-token = os.getenv('GITHUB_TOKEN')
+# file = open(r'Url File.txt',"r")
+# input = file.readlines()
+# file.close()
+# input[len(input)-1] = input[len(input)-1] + '\n'
+# input = [i[:-1] for i in input]
+# git_inputs = [i for i in input if i[8:11] == 'git']
+# npm_inputs = [i for i in input if i[8:11] == 'npm']
+# error_inputs = [i for i in input if ((i[8:11] == 'npm') and (i[8:11] == 'git'))]
+token = config('API_KEY')
 
 def format_url(url):
     url = url.split('://')
@@ -28,7 +28,7 @@ def format_url(url):
 
 ## If username and token are provided then will authorize, can be adjusted as neccesary
 def authorize(token):
-    if(token != False):
+    if(token != None):
         return {'Authorization': 'token ' + token}
     else:
         return None
@@ -141,7 +141,6 @@ def write(input,token):
     out = open(r'out.txt','w')
     for url in input:
         url = format_url(url)
-        print(url)
         out.write(url + '\n')
         out.write('Number of Events: ' + str(events(url,token)) + '\n')
         out.write('Number of Starred: ' + str(starred(url,token)) + '\n')
@@ -156,7 +155,7 @@ def write(input,token):
     out.close()
 
 
-write(git_inputs,token)
+
 # urlx = format_url(url2)
 # print(events(urlx,'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'))
 

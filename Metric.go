@@ -27,13 +27,11 @@ func readFromFile(file string) string {
 }
 
 func main() {
-	//out := numLines()
-	//fmt.Println(out)
 	file := "out.txt"
-	numLines()
 	data := readFromFile(file)
-	lines := strings.Split(data, "\n")
-
+	lines := strings.Split(data, "https")
+	lines = lines[1:]
+	//fmt.Println(lines)
 	var Number_of_Events int
 	var Number_of_Starred int
 	var Number_of_Subscribers int
@@ -42,35 +40,52 @@ func main() {
 	var Number_of_Closed_Issues int
 	var Community_Metric int
 	var Pull_Requests int
-
+	var Lines_of_Code int
+	// scores := make(map[string]float64)
+	
 	for _, line := range lines {
-		if strings.Contains(line, "Number of Events") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Events)
-		} else if strings.Contains(line, "Number of Starred") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Starred)
-		} else if strings.Contains(line, "Number of Subscribers") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Subscribers)
-		} else if strings.Contains(line, "Number of Commits") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Commits)
-		} else if strings.Contains(line, "Number of Open_Issues") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Open_Issues)
-		} else if strings.Contains(line, "Number of Closed_Issues") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[3], "%d", &Number_of_Closed_Issues)
-		} else if strings.Contains(line, "Community Metric") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[2], "%d", &Community_Metric)
-		} else if strings.Contains(line, "Pull_Requests") {
-			fields := strings.Fields(line)
-			fmt.Sscanf(fields[1], "%d", &Pull_Requests)
+		line1 := strings.Split(line,"\n")
+		line1[0] = "https" + line1[0]
+		dir := strings.Split(line1[0],"/")//[len(line1)-1]
+		dir1 := dir[len(dir)-1]
+		Lines_of_Code = numLines(dir1)
+		fmt.Println(Lines_of_Code)
+		for _, ind := range line1 {
+			if strings.Contains(ind, "Number of Events") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Events)
+			} else if strings.Contains(ind, "Number of Starred") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Starred)
+			} else if strings.Contains(ind, "Number of Subscribers") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Subscribers)
+			} else if strings.Contains(ind, "Number of Commits") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Commits)
+			} else if strings.Contains(ind, "Number of Open_Issues") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Open_Issues)
+			} else if strings.Contains(ind, "Number of Closed_Issues") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[3], "%d", &Number_of_Closed_Issues)
+			} else if strings.Contains(ind, "Community Metric") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[2], "%d", &Community_Metric)
+			} else if strings.Contains(ind, "Pull_Requests") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[1], "%d", &Pull_Requests)
+			}
 		}
+		// scores["RAMP_UP_SCORE"] = rampUpScore()
+		// scores["CORRECTNESS_SCORE"] = correctnessScore()
+		// scores["BUS_FACTOR_SCORE"] = busFactorScore()
+		// scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore()
+		// scores["LICENSE_SCORE"] = license()
+
 	}
 }
+
 
 //export rampUpScore
 func rampUpScore(contributors int, linesOfCode int) float64 {
@@ -110,23 +125,18 @@ func netScore(correctnessScore float64, busFactorScore float64, license float64,
 	return final_score
 }
 
-func numLines() int{
-	files, err := ioutil.ReadDir("./")
+func numLines(dir string) int{
+	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		panic(err)
+		fmt.Println("Error reading file:", err)
 	}
-	// file, err := os.Create("output_lines.txt")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// defer file.Close()
 	out := 0
 	for _, f:= range files {
-		// fmt.Println(f.Name())
-		content, err := ioutil.ReadFile(f.Name())
+		//fmt.Println(f.Name())
+		content, err := ioutil.ReadFile(dir + "/" + f.Name())
 		content1 := string(content)
 		if err != nil {
-			// fmt.Println("Error reading file:", err)
+			//fmt.Println("Error reading file:", err)
 			continue
 		}
 		lines := strings.Split(content1,"\n")
@@ -141,17 +151,8 @@ func numLines() int{
 				nonEmpty = append(nonEmpty,str)
 			}
 		}
-		// _, err = file.WriteString(f.Name())
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
-		// string_len := strconv.Itoa(len(nonEmpty)) + " \n"
-		// _, err = file.WriteString(string_len)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// }
 		out = out + len(nonEmpty)
-		// fmt.Println(len(nonEmpty)
+		// fmt.Println(len(nonEmpty))
 	}
 	return out
 }

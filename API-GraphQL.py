@@ -1,9 +1,9 @@
 import requests
 from decouple import config
 
-API_KEY = config('API_KEY')
+token = config('API_KEY')
 
-headers = {"Authorization": API_KEY}
+headers = {"Authorization": 'Bearer ' + token}
 
 
 def run_graphQlQuery(graphQlQuery):  # A simple function to use requests.post to make the API call. Note the json= section.

@@ -43,6 +43,8 @@ def urlValidator(urls):
     return validatedUrls
 
 urls = parseUrls(urlFilePath)
+for i in range(len(urls)):
+    urls[i] = urls[i].replace('\n','')
 validUrls = urlValidator(urls)
 
 with open("Validated Urls", "w") as f:

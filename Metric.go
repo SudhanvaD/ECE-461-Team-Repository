@@ -36,7 +36,8 @@ func main() {
 	// Load in graphQL file
 	file_QL := "outputGraphQl.txt"
 	data_QL := readFromFile(file_QL)
-	lines_QL := strings.Split(data_QL,"}}")[0:3]
+	lines_QL := strings.Split(data_QL,"}}")
+	lines_QL = lines_QL[:(len(lines_QL)-1)]
 	// Declare the name of variable to use for later calculations
 	var Number_of_Events int
 	var Number_of_Starred int //
@@ -83,7 +84,6 @@ func main() {
 				fmt.Sscanf(fields[1], "%s", &License)
 			} 
 		}
-		
 		linesQL1 := strings.Split(lines_QL[i],",")
 		for _, ind := range linesQL1{
 			if strings.Contains(ind, "forks") {
@@ -174,8 +174,11 @@ func busFactorScore(forks int, lines int, pulls int ) float64 {
 
 //export correctnessScore
 func correctnessScore(openIssues int, closedIssues int, starred int, subscribers int) float64 {
-	totalIssues := openIssues + closedIssues
-	openIssuesRatio := 1 - (float64(openIssues) / float64(totalIssues))
+	//totalIssues := openIssues + closedIssues
+	openIssuesRatio := 1 - (float64(openIssues) / float64(closedIssues))
+	if openIssuesRatio > 1{
+		openIssuesRatio = 1
+	}
 	subscribersScore := float64(subscribers) / 100
 	starredScore := float64(starred) / 500
 	if starredScore > 1 {
@@ -200,6 +203,7 @@ func numLines(dir string) int{
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
+		return 2500
 	}
 	out := 0
 	for _, f:= range files {

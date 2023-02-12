@@ -12,7 +12,6 @@ def findGitUrl(url):
     response = requests.get(url)
     print('Function code 3', response)
     rd = response.json()
-    print(rd)
     gitUrl = rd['repository']['url']
     gitUrl = gitUrl[4:]
     gitUrl = gitUrl.replace('.git', '')
@@ -20,7 +19,7 @@ def findGitUrl(url):
 
     return gitUrl
 
-
+"""
 def parseUrls(urlFilePath):
     try:
         fp = open(urlFilePath)
@@ -50,5 +49,5 @@ validUrls = urlValidator(urls)
 with open("Validated Urls", "w") as f:
     for url in validUrls:
         print(url, file=f)
-
+"""
 #findGitUrl('https://www.npmjs.com/package/express')

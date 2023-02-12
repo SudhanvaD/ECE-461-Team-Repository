@@ -14,14 +14,19 @@ def parseUrls(urlFilePath):
 def urlValidator(urls):
     validatedUrls = []
     for url in urls:
+        url = url.replace('\n','')
         if validators.url(url) is True and 'github.com' in url:
             print(url)
-            validatedUrls.append(url.replace('\n',''))
+            validatedUrls.append(url)
         elif validators.url(url) is True and 'www.npmjs.com' in url:
             print(url)
             gitUrl = findGitUrl(url)
-            #print(gitUrl)
-            #validatedUrls.append(gitUrl.replace('\n',''))
+            validatedUrls.append(gitUrl)
+
+    for i in range(len(validatedUrls)):
+        if 'ssh://git@' in validatedUrls[i]:
+            print(url)
+            validatedUrls[i] = validatedUrls[i].replace('ssh://git@','https://')
     return validatedUrls
 
 urls = parseUrls(urlFilePath)

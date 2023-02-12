@@ -5,19 +5,7 @@ from decouple import config
 
 ## Get number of contributors
 
-url1 = 'https://api.github.com/repos/cloudinary/cloudinary_npm'
-url2 = 'https://github.com/nullivex/nodist'
-url3 = 'https://github.com/lodash/lodash'
-
-file = open(r'Url File.txt',"r")
-input = file.readlines()
-file.close()
-input[len(input)-1] = input[len(input)-1] + '\n'
-input = [i[:-1] for i in input]
-git_inputs = [i for i in input if i[8:11] == 'git']
-npm_inputs = [i for i in input if i[8:11] == 'npm']
-error_inputs = [i for i in input if ((i[8:11] == 'npm') and (i[8:11] == 'git'))]
-token = os.getenv('GITHUB_TOKEN')
+token = config('API_KEY')
 
 def format_url(url):
     url = url.split('://')
@@ -28,7 +16,7 @@ def format_url(url):
 
 ## If username and token are provided then will authorize, can be adjusted as neccesary
 def authorize(token):
-    if(token != False):
+    if(token != None):
         return {'Authorization': 'token ' + token}
     else:
         return None
@@ -141,24 +129,25 @@ def write(input,token):
     out = open(r'out.txt','w')
     for url in input:
         url = format_url(url)
-        print(url)
         out.write(url + '\n')
-        out.write('Number of Events: ' + str(events(url,token)) + '\n')
-        out.write('Number of Starred: ' + str(starred(url,token)) + '\n')
-        out.write('Number of Subscribers: ' + str(subscribers(url,token)) + '\n')
-        out.write('Number of Commits: ' + str(commits(url,token)) + '\n')
-        out.write('Number of Open_Issues: ' + str(open_issues(url,token)) + '\n')
-        out.write('Number of Closed_Issues: ' + str(closed_issues(url,token)) + '\n')
-        out.write('License: ' + license(url,token) + '\n')
-        out.write('Community Metric: ' + str(Community_Metrics(url,token)) + '\n')
-        out.write('Pull_Requests: ' + str(pull_requests(url,token)) + '\n')
+        out.write('Number of Events: ' + str(events(url,token)) + '\n') # Events
+        out.write('Number of Starred: ' + str(starred(url,token)) + '\n') # Starred
+        out.write('Number of Subscribers: ' + str(subscribers(url,token)) + '\n') # Subscribers
+        out.write('Number of Commits: ' + str(commits(url,token)) + '\n') # Commits
+        out.write('Number of Open_Issues: ' + str(open_issues(url,token)) + '\n') # Open_Issues
+        out.write('Number of Closed_Issues: ' + str(closed_issues(url,token)) + '\n') # Closed_Issues
+        out.write('License: ' + license(url,token) + '\n') # License
+        out.write('Community Metric: ' + str(Community_Metrics(url,token)) + '\n') # Community Metric
+        out.write('Pull_Requests: ' + str(pull_requests(url,token)) + '\n') # Pull Requests
         out.write('\n')
     out.close()
 
 
-write(git_inputs,token)
+
 # urlx = format_url(url2)
 # print(events(urlx,'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'))
+
+
 
 
 

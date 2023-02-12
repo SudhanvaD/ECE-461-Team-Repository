@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"io/ioutil"
+	"sort"
 )
 
 func readFromFile(file string) string {
@@ -102,15 +103,27 @@ func main() {
 				fmt.Sscanf(fields[2][:(len(fields[2]))], "%d", &Pull_Requests)
 			} 
 		}
-	}
 
 		scores["RAMP_UP_SCORE"] = rampUpScore(Community_Metric,Lines_of_Code)
 		scores["CORRECTNESS_SCORE"] = correctnessScore(Number_of_Open_Issues,Number_of_Closed_Issues,Number_of_Starred,Number_of_Subscribers)
 		scores["BUS_FACTOR_SCORE"] = busFactorScore(Number_of_forks,Lines_of_Code,Pull_Requests)
 		scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore(Number_of_Commits,Number_of_Closed_Issues)
 		scores["LICENSE_SCORE"] = license(License)
-		scores["NET_SCORE"] = netScore(scores["CORRECTNESS_SCORE"],scores["BUS_FACTOR_SCORE"],scores["LICENSE_SCORE"],scores["RAMP_UP_SCORE"],scores["RESPONSIVE_MAINTAINER_SCORE"])
-		fmt.Println(scores["NET_SCORE"])
+		net_score  := netScore(scores["CORRECTNESS_SCORE"],scores["BUS_FACTOR_SCORE"],scores["LICENSE_SCORE"],scores["RAMP_UP_SCORE"],scores["RESPONSIVE_MAINTAINER_SCORE"])
+		keys := make([]pair, 0, len(scores))
+		for key, value := range scores {
+			keys = append(keys, pair{key, value})
+		}
+
+		sort.Slice(keys, func(i, j int) bool {
+			return keys[i].Value > keys[j].Value
+		})
+
+		
+		//keys = sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+		fmt.Printf("{%s, \"NET_SCORE\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f}\n", line1[0],net_score,keys[0].Key,scores[keys[0].Key],keys[1].Key,scores[keys[1].Key],keys[2].Key,scores[keys[2].Key],keys[3].Key,scores[keys[3].Key])
+	}
+		
 }
 
 
@@ -210,4 +223,9 @@ func numLines(dir string) int{
 		// fmt.Println(len(nonEmpty))
 	}
 	return out
+}
+
+type pair struct {
+	Key   string
+	Value float64
 }

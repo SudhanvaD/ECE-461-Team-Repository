@@ -13,12 +13,6 @@ def format_url(url):
     return url
 
 
-## If username and token are provided then will authorize, can be adjusted as neccesary
-def authorize(token):
-    if (token != None):
-        return {'Authorization': 'token ' + token}
-    else:
-        return None
 
 
 ## Returns the number of events per repo, can do up to 100
@@ -139,17 +133,3 @@ def write(input, token):
     for url in input:
         url = format_url(url)
         out.write(url + '\n')
-        out.write('Number of Events: ' + str(events(url, token)) + '\n')  # Events
-        out.write('Number of Starred: ' + str(starred(url, token)) + '\n')  # Starred
-        out.write('Number of Subscribers: ' + str(subscribers(url, token)) + '\n')  # Subscribers
-        out.write('Number of Commits: ' + str(commits(url, token)) + '\n')  # Commits
-        out.write('Number of Open_Issues: ' + str(open_issues(url, token)) + '\n')  # Open_Issues
-        out.write('Number of Closed_Issues: ' + str(closed_issues(url, token)) + '\n')  # Closed_Issues
-        out.write('License: ' + license(url, token) + '\n')  # License
-        out.write('Community Metric: ' + str(Community_Metrics(url, token)) + '\n')  # Community Metric
-        out.write('Pull_Requests: ' + str(pull_requests(url, token)) + '\n')  # Pull Requests
-        out.write('\n')
-    out.close()
-
-# urlx = format_url(url2)
-# print(events(urlx,'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'))

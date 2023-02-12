@@ -50,15 +50,12 @@ def run_graphQlQuery(graphQlQuery):  # A simple function to use requests.post to
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, graphQlQuery))
 
-
-graphQlData = []
-for url in urlParser.validUrls:
-    query = generateQuery(url)
-    result = run_graphQlQuery(query)
-    graphQlData.append(result['data']['repositoryOwner']['repository'])
-
-#Printing and Saving to text file
-for i in graphQlData: print("Info - {}".format(i))
-
-with open("outputGraphQl.txt", "w") as f:
-    for i in graphQlData: print("Info - {}\n".format(i), file=f)
+def generateGraphQLData(validUrls):
+    graphQlData = []
+    for url in validUrls:
+        query = generateQuery(url)
+        result = run_graphQlQuery(query)
+        graphQlData.append(result['data']['repositoryOwner']['repository'])
+    for i in graphQlData: print("Info - {}".format(i))
+    with open("outputGraphQl.txt", "w") as f:
+        for i in graphQlData: print("Info - {}\n".format(i), file=f)

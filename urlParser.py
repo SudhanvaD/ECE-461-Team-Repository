@@ -1,7 +1,7 @@
 import validators
 from npmAPI import findGitUrl
 
-urlFilePath = "/Users/haani/Documents/Spring 2023/ECE 461/Haani's Fork/ECE-461-Haani-Repository/Url File.txt"
+#urlFilePath = "/Users/haani/Documents/Spring 2023/ECE 461/Haani's Fork/ECE-461-Haani-Repository/Url File.txt"
 
 def parseUrls(urlFilePath):
     try:
@@ -29,9 +29,7 @@ def urlValidator(urls):
             validatedUrls[i] = validatedUrls[i].replace('ssh://git@','https://')
     return validatedUrls
 
-urls = parseUrls(urlFilePath)
-validUrls = urlValidator(urls)
-
-with open("Validated Urls", "w") as f:
-    for url in validUrls:
-        print(url, file=f)
+def generateValidUrls(urlFilePath):
+    urls = parseUrls(urlFilePath)
+    validUrls = urlValidator(urls)
+    return validUrls

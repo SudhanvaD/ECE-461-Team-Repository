@@ -22,6 +22,11 @@ def urlValidator(urls):
             print(url)
             gitUrl = findGitUrl(url)
             validatedUrls.append(gitUrl)
+
+    for i in range(len(validatedUrls)):
+        if 'ssh://git@' in validatedUrls[i]:
+            print(url)
+            validatedUrls[i] = validatedUrls[i].replace('ssh://git@','https://')
     return validatedUrls
 
 urls = parseUrls(urlFilePath)

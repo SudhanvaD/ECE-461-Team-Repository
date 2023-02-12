@@ -27,36 +27,41 @@ func readFromFile(file string) string {
 }
 
 func main() {
+	// Load in REST file
 	file := "out.txt"
 	data := readFromFile(file)
 	lines := strings.Split(data, "https")
 	lines = lines[1:]
-	//fmt.Println(lines)
+	// Load in graphQL file
+	file_QL := "outputGraphQl.txt"
+	data_QL := readFromFile(file_QL)
+	lines_QL := strings.Split(data_QL,"}}")[0:3]
+	// Declare the name of variable to use for later calculations
 	var Number_of_Events int
-	var Number_of_Starred int
-	var Number_of_Subscribers int
-	var Number_of_Commits int
+	var Number_of_Starred int //
+	var Number_of_Subscribers int //
+	var Number_of_Commits int //
 	var Number_of_Open_Issues int
-	var Number_of_Closed_Issues int
-	var Community_Metric int
-	var Pull_Requests int
-	var Lines_of_Code int
-	// scores := make(map[string]float64)
-	
-	for _, line := range lines {
+	var Number_of_Closed_Issues int //
+	var Community_Metric int //
+	var Pull_Requests int //
+	var Number_of_Watchers int
+	var Lines_of_Code int //*
+	var Number_of_forks int //
+	var Number_of_Total_Issues int
+	var License string
+
+	scores := make(map[string]float64)
+	for i, line := range lines {
 		line1 := strings.Split(line,"\n")
 		line1[0] = "https" + line1[0]
 		dir := strings.Split(line1[0],"/")//[len(line1)-1]
 		dir1 := dir[len(dir)-1]
 		Lines_of_Code = numLines(dir1)
-		fmt.Println(Lines_of_Code)
 		for _, ind := range line1 {
 			if strings.Contains(ind, "Number of Events") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[3], "%d", &Number_of_Events)
-			} else if strings.Contains(ind, "Number of Starred") {
-				fields := strings.Fields(ind)
-				fmt.Sscanf(fields[3], "%d", &Number_of_Starred)
 			} else if strings.Contains(ind, "Number of Subscribers") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[3], "%d", &Number_of_Subscribers)
@@ -72,24 +77,55 @@ func main() {
 			} else if strings.Contains(ind, "Community Metric") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[2], "%d", &Community_Metric)
-			} else if strings.Contains(ind, "Pull_Requests") {
+			}  else if strings.Contains(ind, "License") {
 				fields := strings.Fields(ind)
-				fmt.Sscanf(fields[1], "%d", &Pull_Requests)
-			}
+				fmt.Sscanf(fields[1], "%s", &License)
+			} 
 		}
-		// scores["RAMP_UP_SCORE"] = rampUpScore()
-		// scores["CORRECTNESS_SCORE"] = correctnessScore()
-		// scores["BUS_FACTOR_SCORE"] = busFactorScore()
-		// scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore()
-		// scores["LICENSE_SCORE"] = license()
-
+		
+		linesQL1 := strings.Split(lines_QL[i],",")
+		for _, ind := range linesQL1{
+			if strings.Contains(ind, "forks") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[4][:(len(fields[4])-1)], "%d", &Number_of_forks)
+			} else if strings.Contains(ind, "issues") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[2][:(len(fields[2])-1)], "%d", &Number_of_Total_Issues)
+			} else if strings.Contains(ind, "stargazers") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[2][:(len(fields[2])-1)], "%d", &Number_of_Starred)
+			} else if strings.Contains(ind, "watchers") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[2][:(len(fields[2])-1)], "%d", &Number_of_Watchers)
+			} else if strings.Contains(ind, "pullRequests") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[2][:(len(fields[2]))], "%d", &Pull_Requests)
+			} 
+		}
 	}
+
+		scores["RAMP_UP_SCORE"] = rampUpScore(Community_Metric,Lines_of_Code)
+		scores["CORRECTNESS_SCORE"] = correctnessScore(Number_of_Open_Issues,Number_of_Closed_Issues,Number_of_Starred,Number_of_Subscribers)
+		scores["BUS_FACTOR_SCORE"] = busFactorScore(Number_of_forks,Lines_of_Code,Pull_Requests)
+		scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore(Number_of_Commits,Number_of_Closed_Issues)
+		scores["LICENSE_SCORE"] = license(License)
+		scores["NET_SCORE"] = netScore(scores["CORRECTNESS_SCORE"],scores["BUS_FACTOR_SCORE"],scores["LICENSE_SCORE"],scores["RAMP_UP_SCORE"],scores["RESPONSIVE_MAINTAINER_SCORE"])
+		fmt.Println(scores["NET_SCORE"])
 }
 
 
 //export rampUpScore
-func rampUpScore(contributors int, linesOfCode int) float64 {
-	return float64(contributors) / float64(linesOfCode)
+// Use lines of code, as the more lines there are the harder it will be to learn
+// Use community metric, as reflects different methods of help access such as readme and license
+func rampUpScore(communityMetric int, linesOfCode int) float64 {
+	metricScale := float64(communityMetric) / 100
+	linesScale := float64(linesOfCode) / 5000
+	if linesScale > 1{
+		linesScale = 1
+	}
+	linesScale = 1 - linesScale
+	return ((metricScale + linesScale) / 2)
+	
 }
 
 //export license
@@ -102,26 +138,45 @@ func license(license string) float64 {
 }
 
 //export busFactorScore
-func busFactorScore(developers int) float64 {
-	score := float64(developers) / 100
-	if score > 1 {
-		return 1
+func busFactorScore(forks int, lines int, pulls int ) float64 {
+	forksScore := float64(forks) / 500
+	if forksScore > 1 {
+		forksScore = 1
 	}
-	return score
+	linesScale := float64(lines) / 5000
+	if linesScale > 1{
+		linesScale = 1
+	}
+	linesScale = 1 - linesScale
+	pullsScore := float64(pulls) / 500
+	if pullsScore > 1 {
+		pullsScore = 1
+	}
+	score := (linesScale + forksScore + pullsScore) / 3
+	return float64(score)
 }
 
 //export correctnessScore
-func correctnessScore(openIssues int, closedIssues int, communityMetric float64) float64 {
+func correctnessScore(openIssues int, closedIssues int, starred int, subscribers int) float64 {
 	totalIssues := openIssues + closedIssues
-	openIssuesRatio := float64(openIssues) / float64(totalIssues)
-	score := (1 - openIssuesRatio) + communityMetric
-	if score > 1 {
-		return 1
+	openIssuesRatio := 1 - (float64(openIssues) / float64(totalIssues))
+	subscribersScore := float64(subscribers) / 100
+	starredScore := float64(starred) / 500
+	if starredScore > 1 {
+		starredScore = 1
 	}
+	score := (openIssuesRatio + subscribersScore + starredScore) / 3
 	return score
 }
-func netScore(correctnessScore float64, busFactorScore float64, license float64, rampUpScore float64) float64 {
-	final_score := (2*correctnessScore + 1.5*busFactorScore + 2*license + 2*rampUpScore) / 10.5
+
+func responsiveMaintainerScore(commits int, closedIssues int) float64 {
+	commitsScore := float64(commits) / 100
+	closedIssuesScore := float64(commits) / 100
+	return (commitsScore + closedIssuesScore) / 2.0
+}
+
+func netScore(correctnessScore float64, busFactorScore float64, license float64, rampUpScore float64, MaintainerResponsivenss float64) float64 {
+	final_score := (2*correctnessScore + 1.5*busFactorScore + 2*license + 2*rampUpScore + 3 * MaintainerResponsivenss) / 10.5
 	return final_score
 }
 

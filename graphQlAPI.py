@@ -5,10 +5,6 @@ import re
 from urllib.parse import urlparse
 
 
-token = config('API_KEY')
-
-headers = {"Authorization": 'Bearer ' + token}
-
 def generateQuery(url):
 
     parseResults = urlparse(url)
@@ -43,19 +39,20 @@ def generateQuery(url):
     #print(graphQlQuery)
     return graphQlQuery
 
-def run_graphQlQuery(graphQlQuery):  # A simple function to use requests.post to make the API call. Note the json= section.
+def run_graphQlQuery(graphQlQuery, token):  # A simple function to use requests.post to make the API call. Note the json= section.
+    headers = {"Authorization": 'Bearer ' + token}
     request = requests.post('https://api.github.com/graphql', json={'query': graphQlQuery}, headers=headers)
     if request.status_code == 200:
         return request.json()
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, graphQlQuery))
 
-def generateGraphQLData(validUrls):
+def generateGraphQLData(validUrls, token):
     graphQlData = []
     for url in validUrls:
         query = generateQuery(url)
-        result = run_graphQlQuery(query)
+        result = run_graphQlQuery(query, token)
         graphQlData.append(result['data']['repositoryOwner']['repository'])
-    for i in graphQlData: print("Info - {}".format(i))
+    #for i in graphQlData: print("Info - {}".format(i))
     with open("outputGraphQl.txt", "w") as f:
         for i in graphQlData: print("Info - {}\n".format(i), file=f)

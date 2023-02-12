@@ -26,22 +26,20 @@ def urlValidator(urls):
             try:
                 clone(url)
             except:
-                print('No Access')
+                print('No Access', url)
                 # log that repo could not be cloned
             validatedUrls.append(url)
         elif validators.url(url) is True and 'www.npmjs.com' in url:
-            print(url)
             gitUrl = findGitUrl(url)
             try:
                 clone(gitUrl)
             except:
-                print('No Access')
+                print('No Access', url)
                  # Log that repo could not be cloned
             validatedUrls.append(gitUrl)
 
     for i in range(len(validatedUrls)):
         if 'ssh://git@' in validatedUrls[i]:
-            print(url)
             validatedUrls[i] = validatedUrls[i].replace('ssh://git@','https://')
     return validatedUrls
 

@@ -18,7 +18,7 @@ def urlValidator(urls):
             print(url)
             validatedUrls.append(url.replace('\n',''))
         elif validators.url(url) is True and 'www.npmjs.com' in url:
-            print('Activated for {}'.format(url))
+            print(url)
             gitUrl = findGitUrl(url)
             #print(gitUrl)
             #validatedUrls.append(gitUrl.replace('\n',''))

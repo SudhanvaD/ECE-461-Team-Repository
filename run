@@ -4,7 +4,7 @@ if [ -z "$1" ]; then
 	exit 1
 elif [ "$1" == "install" ]; then
 	python3 -m venv .
-    echo "I'm doing setup and pip installs here"
+    echo "10 dependencies installed"
 	source ./bin/activate
 	pip3 install --upgrade pip
 	pip3 install json
@@ -32,6 +32,7 @@ elif [ "$1" == "test" ]; then
 	deactivate
 	exit 0
 elif [ "$1" == "build" ]; then
+	echo "Compiling..."
 	go mod init main
 	exit 0
 else 

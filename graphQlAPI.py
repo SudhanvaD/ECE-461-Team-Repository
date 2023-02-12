@@ -47,7 +47,7 @@ def run_graphQlQuery(graphQlQuery, token):  # A simple function to use requests.
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, graphQlQuery))
 
-def generateGraphQLData(validUrls, token):
+def generateGraphQLData(validUrls, token, logFilePath):
     graphQlData = []
     for url in validUrls:
         query = generateQuery(url)

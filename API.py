@@ -134,7 +134,7 @@ def pull_requests(url, token=False):
     return len(rd)
 
 
-def write(input, token):
+def write(input, token, logFilePath):
     out = open(r'out.txt', 'w')
     for url in input:
         url = format_url(url)

@@ -31,6 +31,9 @@ elif [ "$1" == "test" ]; then
 	python3 test.py "$1"
 	deactivate
 	exit 0
+elif [ "$1" == "build" ]; then
+	go mod init main
+	exit 0
 else 
 	python3 -m venv .
 	source ./bin/activate

@@ -9,7 +9,12 @@ def findGitUrl(url):
     packageName = splits[-1]
     url = 'https://registry.npmjs.org/' + packageName
     #print('Function code 2', url)
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except:
+        print('Cannot get response from NPM API')
+        with open(logFilePath, "a") as f:
+            print("Cannot get response from NPM API {}\n".format(response), file=f)
     #print('Function code 3', response)
     rd = response.json()
     gitUrl = rd['repository']['url']

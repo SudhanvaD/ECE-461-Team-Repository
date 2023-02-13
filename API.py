@@ -18,6 +18,9 @@ def authorize(token):
     if (token != None):
         return {'Authorization': 'token ' + token}
     else:
+        with open(logFilePath, "a") as f:
+            print("GitHub API Token Authorization Failed", file=f)
+        #os.environ["LOG_LEVEL"] = 2
         return None
 
 

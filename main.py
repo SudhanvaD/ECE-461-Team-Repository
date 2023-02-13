@@ -12,7 +12,9 @@ if __name__ == "__main__":
     with open(logFilePath, "w") as f:
         print("Error Log Now Running\n", file=f)
     logLevel = config('LOG_LEVEL')
+
     #urlFilePath = sys.argv[1] #.split("/").pop()
+
     urlFilePath = "/Users/haani/Documents/Spring 2023/ECE 461/Haani's Fork/ECE-461-Haani-Repository/Url File.txt"
 
     validUrls = generateValidUrls(urlFilePath, logFilePath)

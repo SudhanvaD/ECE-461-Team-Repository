@@ -29,7 +29,7 @@ elif [ "$1" == "test" ]; then
 	echo "Test running"
 	python3 -m venv .
 	source ./bin/activate
-	python3 test.py "$1"
+	python3 test.py
 	deactivate
 	exit 0
 elif [ "$1" == "build" ]; then

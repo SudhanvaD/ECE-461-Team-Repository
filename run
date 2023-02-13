@@ -15,7 +15,6 @@ elif [ "$1" == "install" ]; then
 	pip3 install validators
 	pip3 install sys
 	pip3 install git-python
-	pip3 install urlParser
 	# pip3 install go
 	# go mod init main
 	go install

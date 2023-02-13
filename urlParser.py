@@ -30,6 +30,7 @@ def urlValidator(urls, logFilePath):
                 clone(url)
             except:
                 print('Cannot Clone. No Access to or already cloned', url)
+                #os.environ["LOG_LEVEL"] = 2
                 with open(logFilePath, "a") as f:
                     print("Cannot Clone. No Access to or already cloned {}\n".format(url), file=f)
                 # log that repo could not be cloned

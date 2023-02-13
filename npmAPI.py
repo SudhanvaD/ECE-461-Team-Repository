@@ -12,7 +12,7 @@ def findGitUrl(url):
     try:
         response = requests.get(url)
     except:
-        print('Cannot get response from NPM API', response)
+        print('Cannot get response from NPM API')
         with open(logFilePath, "a") as f:
             print("Cannot get response from NPM API {}\n".format(response), file=f)
     #print('Function code 3', response)

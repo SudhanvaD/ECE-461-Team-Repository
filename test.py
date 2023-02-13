@@ -38,6 +38,10 @@ License_expected = lines[7]
 Community_Metric_expected = (lines[8])
 Pull_Requests_expected = (lines[9])
 
+casses_passed = 0
 for i in range(len(lines)):
-    assert lines[i] == lines_expected[i], f"Mismatch in line {i + 1}: expected '{lines_expected[i]}' but got '{lines[i]}'"
-    print(f"Match in line {i + 1}: '{lines[i]}'")
+    assert lines[i] == lines_expected[i]
+    casses_passed = casses_passed + 1
+print(f"Total: {len(lines)}")
+print(f"Passed: {casses_passed}")
+print(f"{casses_passed}/{len(lines)} passed")

@@ -1,3 +1,10 @@
+from API import *
+from graphQlAPI import *
+from npmAPI import *
+from urlParser import *
+import sys
+
+
 if __name__ == "__main__":
 
     token = config('GITHUB_TOKEN')

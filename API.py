@@ -120,7 +120,11 @@ def Community_Metrics(url, token=False):
 
     response = requests.get(url, headers=authorize(token))
     rd = response.json()
-    return rd['health_percentage']
+    try:
+        out = rd['health_percentage']
+    except:
+        out = 50
+    return out
 
 
 ## Returns the number of closed issues to a repo, can do up to 100

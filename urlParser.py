@@ -10,6 +10,7 @@ def clone(url):
     #os.makedirs(s)
     git.Repo.clone_from(url, local_path)
 
+
 def parseUrls(urlFilePath, logFilePath):
     try:
         fp = open(urlFilePath)
@@ -29,7 +30,7 @@ def urlValidator(urls, logFilePath):
             try:
                 clone(url)
             except:
-                print('Cannot Clone. No Access to or already cloned', url)
+                # print('Cannot Clone. No Access to or already cloned', url)
                 #os.environ["LOG_LEVEL"] = 2
                 with open(logFilePath, "a") as f:
                     print("Cannot Clone. No Access to or already cloned {}\n".format(url), file=f)
@@ -40,7 +41,7 @@ def urlValidator(urls, logFilePath):
             try:
                 clone(gitUrl)
             except:
-                print('Cannot Clone. No Access to or already cloned', url)
+                # print('Cannot Clone. No Access to or already cloned', url)
                 with open(logFilePath, "a") as f:
                     print("Cannot Clone. No Access to or already cloned {}\n".format(url), file=f)
                  # Log that repo could not be cloned

@@ -124,7 +124,7 @@ func main() {
 		linex := strings.Split(line1[0],"api.")
 		linex2 := strings.Split(linex[1],"/repos")
 		line1[0] = linex[0] + linex2[0] + linex2[1]
-		fmt.Printf("{%s, \"NET_SCORE\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f}\n", line1[0],net_score,keys[0].Key,scores[keys[0].Key],keys[1].Key,scores[keys[1].Key],keys[2].Key,scores[keys[2].Key],keys[3].Key,scores[keys[3].Key])
+		fmt.Printf("{\"URL\":%s, \"NET_SCORE\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f}\n", line1[0],net_score,keys[0].Key,scores[keys[0].Key],keys[1].Key,scores[keys[1].Key],keys[2].Key,scores[keys[2].Key],keys[3].Key,scores[keys[3].Key])
 	}
 		
 }

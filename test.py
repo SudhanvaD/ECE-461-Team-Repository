@@ -11,11 +11,7 @@ except Exception as e:
 # Split the data into lines
 lines = data.split("\n")
 
-#if len(lines) != 10:
-#    print("File format is incorrect.")
-#    exit()
 
-# Assign values to variables
 try:
     url = lines[0]
     number_of_events = int(lines[1])

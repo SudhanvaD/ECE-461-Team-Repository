@@ -1,6 +1,9 @@
 try:
     with open('out.txt', 'r') as f:
         lines = f.readlines()
+        if len(lines) < 10:
+            print("Missing information")
+            exit()
         url = lines[0].strip()
         number_of_events = int(lines[1].split(": ")[1])
         number_of_starred = int(lines[2].split(": ")[1])

@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
-	"strings"
 	"io/ioutil"
+	"os"
 	"sort"
+	"strings"
 )
 
 func readFromFile(file string) string {
@@ -36,28 +36,28 @@ func main() {
 	// Load in graphQL file
 	file_QL := "outputGraphQl.txt"
 	data_QL := readFromFile(file_QL)
-	lines_QL := strings.Split(data_QL,"}}")
-	lines_QL = lines_QL[:(len(lines_QL)-1)]
+	lines_QL := strings.Split(data_QL, "}}")
+	lines_QL = lines_QL[:(len(lines_QL) - 1)]
 	// Declare the name of variable to use for later calculations
 	var Number_of_Events int
-	var Number_of_Starred int //
+	var Number_of_Starred int     //
 	var Number_of_Subscribers int //
-	var Number_of_Commits int //
+	var Number_of_Commits int     //
 	var Number_of_Open_Issues int
 	var Number_of_Closed_Issues int //
-	var Community_Metric int //
-	var Pull_Requests int //
+	var Community_Metric int        //
+	var Pull_Requests int           //
 	var Number_of_Watchers int
-	var Lines_of_Code int //*
+	var Lines_of_Code int   //*
 	var Number_of_forks int //
 	var Number_of_Total_Issues int
 	var License string
 
 	scores := make(map[string]float64)
 	for i, line := range lines {
-		line1 := strings.Split(line,"\n")
+		line1 := strings.Split(line, "\n")
 		line1[0] = "https" + line1[0]
-		dir := strings.Split(line1[0],"/")//[len(line1)-1]
+		dir := strings.Split(line1[0], "/") //[len(line1)-1]
 		dir1 := dir[len(dir)-1]
 		Lines_of_Code = numLines(dir1)
 		for _, ind := range line1 {
@@ -79,13 +79,13 @@ func main() {
 			} else if strings.Contains(ind, "Community Metric") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[2], "%d", &Community_Metric)
-			}  else if strings.Contains(ind, "License") {
+			} else if strings.Contains(ind, "License") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[1], "%s", &License)
-			} 
+			}
 		}
-		linesQL1 := strings.Split(lines_QL[i],",")
-		for _, ind := range linesQL1{
+		linesQL1 := strings.Split(lines_QL[i], ",")
+		for _, ind := range linesQL1 {
 			if strings.Contains(ind, "forks") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[4][:(len(fields[4])-1)], "%d", &Number_of_forks)
@@ -101,15 +101,15 @@ func main() {
 			} else if strings.Contains(ind, "pullRequests") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[2][:(len(fields[2]))], "%d", &Pull_Requests)
-			} 
+			}
 		}
 
-		scores["RAMP_UP_SCORE"] = rampUpScore(Community_Metric,Lines_of_Code)
-		scores["CORRECTNESS_SCORE"] = correctnessScore(Number_of_Open_Issues,Number_of_Closed_Issues,Number_of_Starred,Number_of_Subscribers)
-		scores["BUS_FACTOR_SCORE"] = busFactorScore(Number_of_forks,Lines_of_Code,Pull_Requests)
-		scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore(Number_of_Commits,Number_of_Closed_Issues)
+		scores["RAMP_UP_SCORE"] = rampUpScore(Community_Metric, Lines_of_Code)
+		scores["CORRECTNESS_SCORE"] = correctnessScore(Number_of_Open_Issues, Number_of_Closed_Issues, Number_of_Starred, Number_of_Subscribers)
+		scores["BUS_FACTOR_SCORE"] = busFactorScore(Number_of_forks, Lines_of_Code, Pull_Requests)
+		scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore(Number_of_Commits, Number_of_Closed_Issues)
 		scores["LICENSE_SCORE"] = license(License)
-		net_score  := netScore(scores["CORRECTNESS_SCORE"],scores["BUS_FACTOR_SCORE"],scores["LICENSE_SCORE"],scores["RAMP_UP_SCORE"],scores["RESPONSIVE_MAINTAINER_SCORE"])
+		net_score := netScore(scores["CORRECTNESS_SCORE"], scores["BUS_FACTOR_SCORE"], scores["LICENSE_SCORE"], scores["RAMP_UP_SCORE"], scores["RESPONSIVE_MAINTAINER_SCORE"])
 		keys := make([]pair, 0, len(scores))
 		for key, value := range scores {
 			keys = append(keys, pair{key, value})
@@ -119,16 +119,14 @@ func main() {
 			return keys[i].Value > keys[j].Value
 		})
 
-		
 		//keys = sort.Sort(sort.Reverse(sort.StringSlice(keys)))
-		linex := strings.Split(line1[0],"api.")
-		linex2 := strings.Split(linex[1],"/repos")
+		linex := strings.Split(line1[0], "api.")
+		linex2 := strings.Split(linex[1], "/repos")
 		line1[0] = linex[0] + linex2[0] + linex2[1]
-		fmt.Printf("{\"URL\":%s, \"NET_SCORE\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f}\n", line1[0],net_score,keys[0].Key,scores[keys[0].Key],keys[1].Key,scores[keys[1].Key],keys[2].Key,scores[keys[2].Key],keys[3].Key,scores[keys[3].Key])
+		fmt.Printf("{\"URL\":\"%s\", \"NET_SCORE\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f, \"%s\":%0.2f}\n", line1[0], net_score, keys[0].Key, scores[keys[0].Key], keys[1].Key, scores[keys[1].Key], keys[2].Key, scores[keys[2].Key], keys[3].Key, scores[keys[3].Key])
 	}
-		
-}
 
+}
 
 //export rampUpScore
 // Use lines of code, as the more lines there are the harder it will be to learn
@@ -136,12 +134,12 @@ func main() {
 func rampUpScore(communityMetric int, linesOfCode int) float64 {
 	metricScale := float64(communityMetric) / 100
 	linesScale := float64(linesOfCode) / 5000
-	if linesScale > 1{
+	if linesScale > 1 {
 		linesScale = 1
 	}
 	linesScale = 1 - linesScale
 	return ((metricScale + linesScale) / 2)
-	
+
 }
 
 //export license
@@ -154,13 +152,13 @@ func license(license string) float64 {
 }
 
 //export busFactorScore
-func busFactorScore(forks int, lines int, pulls int ) float64 {
+func busFactorScore(forks int, lines int, pulls int) float64 {
 	forksScore := float64(forks) / 500
 	if forksScore > 1 {
 		forksScore = 1
 	}
 	linesScale := float64(lines) / 5000
-	if linesScale > 1{
+	if linesScale > 1 {
 		linesScale = 1
 	}
 	linesScale = 1 - linesScale
@@ -176,7 +174,7 @@ func busFactorScore(forks int, lines int, pulls int ) float64 {
 func correctnessScore(openIssues int, closedIssues int, starred int, subscribers int) float64 {
 	//totalIssues := openIssues + closedIssues
 	openIssuesRatio := 1 - (float64(openIssues) / float64(closedIssues))
-	if openIssuesRatio > 1{
+	if openIssuesRatio > 1 {
 		openIssuesRatio = 1
 	}
 	subscribersScore := float64(subscribers) / 100
@@ -195,18 +193,18 @@ func responsiveMaintainerScore(commits int, closedIssues int) float64 {
 }
 
 func netScore(correctnessScore float64, busFactorScore float64, license float64, rampUpScore float64, MaintainerResponsivenss float64) float64 {
-	final_score := (2*correctnessScore + 1.5*busFactorScore + 2*license + 2*rampUpScore + 3 * MaintainerResponsivenss) / 10.5
+	final_score := (2*correctnessScore + 1.5*busFactorScore + 2*license + 2*rampUpScore + 3*MaintainerResponsivenss) / 10.5
 	return final_score
 }
 
-func numLines(dir string) int{
+func numLines(dir string) int {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
 		return 2500
 	}
 	out := 0
-	for _, f:= range files {
+	for _, f := range files {
 		//fmt.Println(f.Name())
 		content, err := ioutil.ReadFile(dir + "/" + f.Name())
 		content1 := string(content)
@@ -214,16 +212,16 @@ func numLines(dir string) int{
 			//fmt.Println("Error reading file:", err)
 			continue
 		}
-		lines := strings.Split(content1,"\n")
+		lines := strings.Split(content1, "\n")
 		nonEmpty := []string{}
-		for _, str := range lines{
+		for _, str := range lines {
 			ex := ([]rune(str))
 			ex1 := 13
-			if len(ex) != 0{
+			if len(ex) != 0 {
 				ex1 = int(ex[0])
 			}
-			if ex1 != 13 || len(ex) != 1{
-				nonEmpty = append(nonEmpty,str)
+			if ex1 != 13 || len(ex) != 1 {
+				nonEmpty = append(nonEmpty, str)
 			}
 		}
 		out = out + len(nonEmpty)

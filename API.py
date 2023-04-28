@@ -5,6 +5,19 @@ from decouple import config
 
 ## Get number of contributors
 
+# Get the JasonFile content using the
+def pullJasonFile(url,token=False):
+    branch = "master"
+    packageurl = f"{url}/raw/{branch}/package.json"
+    params = {
+        'per_page': 100
+    }
+    # Retrieve the content of the package.json file
+    response = requests.get(packageurl, params=params, headers=authorize(token))
+    if response.status_code != 200:
+        raise Exception(f"Failed to retrieve package.json file for {url}.")
+    content = response.text
+    return content
 def format_url(url):
     url = url.split('://')
     url = url[0] + '://api.' + url[1]

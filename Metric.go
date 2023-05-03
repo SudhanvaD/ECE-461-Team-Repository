@@ -52,6 +52,7 @@ func main() {
 	var Number_of_forks int //
 	var Number_of_Total_Issues int
 	var License string
+	var Dependencies string
 
 	scores := make(map[string]float64)
 	for i, line := range lines {
@@ -82,6 +83,9 @@ func main() {
 			} else if strings.Contains(ind, "License") {
 				fields := strings.Fields(ind)
 				fmt.Sscanf(fields[1], "%s", &License)
+			} else if strings.Contains(ind, "Dependencies") {
+				fields := strings.Fields(ind)
+				fmt.Sscanf(fields[1], "%s",&Dependencies) 
 			}
 		}
 		linesQL1 := strings.Split(lines_QL[i], ",")
@@ -109,7 +113,8 @@ func main() {
 		scores["BUS_FACTOR_SCORE"] = busFactorScore(Number_of_forks, Lines_of_Code, Pull_Requests)
 		scores["RESPONSIVE_MAINTAINER_SCORE"] = responsiveMaintainerScore(Number_of_Commits, Number_of_Closed_Issues)
 		scores["LICENSE_SCORE"] = license(License)
-		net_score := netScore(scores["CORRECTNESS_SCORE"], scores["BUS_FACTOR_SCORE"], scores["LICENSE_SCORE"], scores["RAMP_UP_SCORE"], scores["RESPONSIVE_MAINTAINER_SCORE"])
+		scores["DEPENDENCIES"] = getDependencyInfo(Dependencies)
+		net_score := netScore(scores["CORRECTNESS_SCORE"], scores["BUS_FACTOR_SCORE"], scores["LICENSE_SCORE"], scores["RAMP_UP_SCORE"], scores["RESPONSIVE_MAINTAINER_SCORE"],scores["DEPENDENCIES"])
 		keys := make([]pair, 0, len(scores))
 		for key, value := range scores {
 			keys = append(keys, pair{key, value})
@@ -127,7 +132,47 @@ func main() {
 	}
 
 }
+//dependency score
 
+func getDependencyInfo(dependenciesString string) float64 {
+	regex := regexp.MustCompile(`([\w-]+):\s*([^,]+)`)
+	dependencies := regex.FindAllStringSubmatch(dependenciesString, -1)
+	numDependencies := len(dependencies)
+	if numDependencies == 0 {
+		return 1.0
+	}
+	numPinnedDependencies := 0
+	for _, dependency := range dependencies {
+		_, version := dependency[1], dependency[2]
+		version = strings.TrimSpace(version)
+		match, _ := regexp.MatchString(`^\^0\.\d+(\.\d+)*$`, version)
+		if match {
+			numPinnedDependencies++
+			continue
+		}
+		match, _ = regexp.MatchString(`^~\d+\.\d+(\.\d+)*$`, version)
+		if match {
+			numPinnedDependencies++
+			continue
+		}
+		match, _ = regexp.MatchString(`^\d+\.\d+(\.\d+)*(\.[xX*])?$`, version)
+		if match {
+			numPinnedDependencies++
+			continue
+		}
+		match, _ = regexp.MatchString(`^\d+\.\d+(\.\d+)*$`, version)
+		if match {
+			numPinnedDependencies++
+			continue
+		}
+		match, _ = regexp.MatchString(`^\d+\.\d+(\.\d+)*\s-\s\d+\.\d+(\.\d+)*$`, version)
+		if match {
+			numPinnedDependencies++
+		}
+	}
+
+	return float64(numPinnedDependencies) / float64(numDependencies)
+}
 //export rampUpScore
 // Use lines of code, as the more lines there are the harder it will be to learn
 // Use community metric, as reflects different methods of help access such as readme and license
